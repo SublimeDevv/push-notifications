@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "583593536789",
+    "project_id": "practia-push",
+    "storage_bucket": "practia-push.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583593536789:android:ced0016fa3b19844804d1c",
+        "android_client_info": {
+          "package_name": "com.example.push_notifications"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM-AyDtsQhO3QlmfpIFe3Sy5M3l_zUhTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
