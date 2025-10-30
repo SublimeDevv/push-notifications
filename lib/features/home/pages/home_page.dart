@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _getToken() async {
     token = await FirebaseMessaging.instance.getToken();
+    print('FCM Token: $token'); 
     setState(() {});
   }
 
