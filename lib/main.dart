@@ -42,13 +42,20 @@ void _configureForegroundHandlers(NotificationService local) {
   FirebaseMessaging.onMessage.listen((message) {
     final title = message.notification?.title ?? 'Mensaje';
     final body = message.notification?.body ?? 'Tienes una notificación';
-    // Mostrar con notificaciones locales en foreground
-    local.showLocal(title: title, body: body);
+    
+    final imageUrl = message.notification?.android?.imageUrl ?? 
+                     message.notification?.apple?.imageUrl ??
+                     message.data['image']; 
+    
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      local.showBigPicture(title: title, body: body, imageUrl: imageUrl);
+    } else {
+      local.showLocal(title: title, body: body);
+    }
   });
 
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     log('onMessageOpenedApp: ${message.data}');
-    // TODO: Navegar a pantalla con datos (deep link)
   });
 }
 

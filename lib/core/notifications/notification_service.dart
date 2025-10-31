@@ -1,4 +1,6 @@
+import 'dart:typed_data';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin _local =
@@ -58,31 +60,44 @@ class NotificationService {
     required String body,
     required String imageUrl,
   }) async {
-    final bigPicture = BigPictureStyleInformation(
-      FilePathAndroidBitmap(imageUrl), 
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode != 200) {
+        await showLocal(title: title, body: body);
+        return;
+      }
 
-      contentTitle: title,
-      summaryText: body,
-      hideExpandedLargeIcon: false,
-    );
-    final androidDetails = AndroidNotificationDetails(
-      _channelId,
-      _channelName,
-      styleInformation: bigPicture,
-      importance: Importance.high,
-      priority: Priority.high,
-      playSound: true,
-    );
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-    await _local.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title,
-      body,
-      NotificationDetails(android: androidDetails, iOS: iosDetails),
-    );
+      final Uint8List imageBytes = response.bodyBytes;
+
+      final bigPicture = BigPictureStyleInformation(
+        ByteArrayAndroidBitmap(imageBytes),
+        contentTitle: title,
+        summaryText: body,
+        hideExpandedLargeIcon: false,
+        largeIcon: ByteArrayAndroidBitmap(imageBytes),
+      );
+      final androidDetails = AndroidNotificationDetails(
+        _channelId,
+        _channelName,
+        styleInformation: bigPicture,
+        largeIcon: ByteArrayAndroidBitmap(imageBytes),
+        importance: Importance.high,
+        priority: Priority.high,
+        playSound: true,
+      );
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+      await _local.show(
+        DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title,
+        body,
+        NotificationDetails(android: androidDetails, iOS: iosDetails),
+      );
+    } catch (e) {
+      await showLocal(title: title, body: body);
+    }
   }
 }
